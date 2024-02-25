@@ -17,6 +17,7 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .route("/manual", web::get().to(manual_greet))
     })
+    .backlog(1000)
     .bind(("127.0.0.1", 8080))?
     .run()
     .await
