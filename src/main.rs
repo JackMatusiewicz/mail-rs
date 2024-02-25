@@ -1,19 +1,6 @@
-use actix_web::{get, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use mail_rs::*;
 
-#[get("/echo/{name}")]
-async fn index(req: HttpRequest) -> impl Responder {
-    let response = format!("Hello, {}", req.match_info().get("name").unwrap_or("anon"));
-    HttpResponse::Ok().body(response)
-}
-
-async fn manual_greet() -> impl Responder {
-    HttpResponse::Ok().body("manual response")
-}
-
-#[get("/health")]
-pub async fn health_check() -> impl Responder {
-    HttpResponse::Ok()
-}
+use actix_web::{web, App, HttpServer};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -31,6 +18,8 @@ async fn main() -> std::io::Result<()> {
 
 #[cfg(test)]
 mod tests {
+    use actix_web::{http::StatusCode, App};
+    use mail_rs::*;
     use actix_web::test;
 
     #[actix_web::test]
