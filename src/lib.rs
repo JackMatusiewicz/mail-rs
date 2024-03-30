@@ -1,3 +1,4 @@
+use actix_web::dev::Server;
 use actix_web::{get, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 #[get("/echo/{name}")]
@@ -11,12 +12,12 @@ pub async fn manual_greet() -> impl Responder {
 }
 
 #[get("/health")]
-pub async fn health_check() -> impl Responder {
-    HttpResponse::Ok()
+pub async fn health_check() -> HttpResponse {
+    HttpResponse::Ok().finish()
 }
 
-pub async fn run_server<A: std::net::ToSocketAddrs>(address: A) -> Result<(), std::io::Error> {
-    HttpServer::new(|| {
+pub fn run_server<A: std::net::ToSocketAddrs>(address: A) -> Result<Server, std::io::Error> {
+    let server = HttpServer::new(|| {
         App::new()
             .service(index)
             .service(health_check)
@@ -24,6 +25,7 @@ pub async fn run_server<A: std::net::ToSocketAddrs>(address: A) -> Result<(), st
     })
     .backlog(1000)
     .bind(address)?
-    .run()
-    .await
+    .run();
+
+    Ok(server)
 }

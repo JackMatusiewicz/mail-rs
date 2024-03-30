@@ -1,10 +1,8 @@
 use mail_rs::*;
 
-use actix_web::{web, App, HttpServer};
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    run_server(("127.0.0.1", 8080)).await
+    run_server(("127.0.0.1", 8080))?.await
 }
 
 #[cfg(test)]
