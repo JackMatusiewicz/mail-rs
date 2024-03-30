@@ -1,5 +1,6 @@
 use actix_web::dev::Server;
 use actix_web::{get, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use std::net::TcpListener;
 
 #[get("/echo/{name}")]
 pub async fn index(req: HttpRequest) -> impl Responder {
@@ -16,7 +17,9 @@ pub async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-pub fn run_server<A: std::net::ToSocketAddrs>(address: A) -> Result<Server, std::io::Error> {
+pub fn run_server<A: std::net::ToSocketAddrs>(address: A) -> Result<(u16, Server), std::io::Error> {
+    let listener: TcpListener = TcpListener::bind(address)?;
+    let port = listener.local_addr()?.port();
     let server = HttpServer::new(|| {
         App::new()
             .service(index)
@@ -24,8 +27,8 @@ pub fn run_server<A: std::net::ToSocketAddrs>(address: A) -> Result<Server, std:
             .route("/manual", web::get().to(manual_greet))
     })
     .backlog(1000)
-    .bind(address)?
+    .listen(listener)?
     .run();
 
-    Ok(server)
+    Ok((port, server))
 }

@@ -3,7 +3,7 @@ use mail_rs::*;
 #[actix_web::test]
 pub async fn server_health_check_works() {
     let server =
-        run_server(("127.0.0.1", 8080))
+        run_server(("127.0.0.1", 0))
             .expect("Server failed to start");
 
     let _ = tokio::spawn(server);
